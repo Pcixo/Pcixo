@@ -42,91 +42,101 @@
         answer: ['Спортивна гімнастика', 'Плавання', 'Боротьба', 'Важка атлетика'],
     }, ]
     let arr = [0, 1, 2, 3];
-
-    function shuffle(arr) {
-        for (var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
-        return arr;
-    }
-    
-    function testText() {
-        $('.test-question').text(test[zeroNumber].task)
-        $('.task-number').text(questionNumber);
-        $.each(test[zeroNumber].answer, function(i, item) {
-            $('.answer-container').append('<li class="answer-row">' + item + '</li>' )
-        });
-        }
-    
-    function answerRowClick() { 
-        
-    $('.answer-row').click (function(){
-        let rightAnswer = test[zeroNumber].answer[0];
-        let answerRow = $('.answer-row');
-        let target = $(this).attr('data-target');
-        let $target = $('#' + target);
-        let answerText = $target.text();
-        if (target == '') {
-            return;
-        }
-        if (answerText == rightAnswer)
-        {
-            correctAnswer = true;
-        }else{
-            correctAnswer = false;
-        }
-        
-        if ($target.click) {
-            $(answerRow).removeClass('active');
-            $(this).addClass('active');
-        }
-        $('.accept').removeAttr('disabled');
-        console.log(answerText);
-        console.log(correctAnswer);
-        console.log($target);
-        
-        });
-    }
-    
-    function answerRowAttrAdd() {
-        let i = 0;
-        $('.answer-container li').each(function(){
-            i++
-            $(this).attr('data-target', 'a' + i);
-            $(this).attr('id', 'a' + i);
-        });
-    }
-    
     random = shuffle(arr);
     let zeroNumber = 0;
     let questionNumber = 1;
     let results = 0;
     let correctAnswer = false;
     let rightAnswer = test[zeroNumber].answer[0];
+    let dataNumber = 0;
+    let testAnswerBox = test[zeroNumber].answer;
+    let answerOption = test.length;
     
-    testText();
-    answerRowClick();
-    answerRowAttrAdd();
-        
+    function shuffle(arr) {
+        for (var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
+        return arr;
+    }
+    
+    function testsMachine() {
+        if (zeroNumber < answerOption){
+            let rightAnswer = test[zeroNumber].answer[0];
+            
+            $('.task-number').text(questionNumber);
+            $('.accept').attr('disabled', true);
+            shuffle(testAnswerBox);
+
+            // answer-row creator
+
+            $.each(testAnswerBox, function(i, item) {
+                $('.test-question').text(test[zeroNumber].task)
+                $('.answer-container').append('<li class="answer-row">' + item + '</li>' )
+            });
+
+            //  add an attribute
+
+            $('.answer-container li').each(function(){
+                dataNumber++
+                $(this).attr('data-target', 'a' + dataNumber);
+                $(this).attr('id', 'a' + dataNumber);
+
+            });
+
+            // answer-row click event
+            
+            $('.answer-row').click (function(){
+                let answerRow = $('.answer-row');
+                let target = $(this).attr('data-target');
+                let $target = $('#' + target);
+                let answerText = $target.text();
+
+                if (target == '') {
+                    return;
+                }
+
+                if (answerText == rightAnswer) {
+                    correctAnswer = true;
+                }else{
+                    correctAnswer = false;
+                }
+
+                if ($target.click) {
+                    $(answerRow).removeClass('active');
+                    $(this).addClass('active');
+                }
+
+                $('.accept').removeAttr('disabled');
+            });
+        }
+    }
+    
+    testsMachine();
+   
+    // accept button action
+    
     $('.accept').click(function () {
+        $('.answer-container li').remove();
+        dataNumber = 0;
         zeroNumber++;
         questionNumber++;
-        $('.answer-container li').remove();
         
-        if (correctAnswer == true)
-        {
+        if (zeroNumber < answerOption) {
+        testAnswerBox = test[zeroNumber].answer;
+        }
+        
+        if (correctAnswer == true) {
             results++
         }
-        if (zeroNumber == 10)
-        {
+        
+        if (questionNumber == 11) {
             alert('Ти відповів правильно на: ' + results + ' запитання');
             $('.accept').attr('disabled', true);
-            
+            $('.test-wrapper').toggle();
+            $('.wrapper').append('<div class="answer-wrapper"' + '<p>' + 'Ти відповів(ла) правильно: на ' + results + ' з ' + answerOption + ' запитань' + '</p>' + '</div>');
         }
-        testText();
-        answerRowClick();
-        answerRowAttrAdd();
-        $('.accept').attr('disabled', true);
+        
+        testsMachine();
+        
     });
     
-   
-
+    
 })(jQuery);
