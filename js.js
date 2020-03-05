@@ -128,7 +128,6 @@
         }
         
         if (questionNumber == 11) {
-            alert('Ти відповів правильно на: ' + results + ' запитання');
             $('.accept').attr('disabled', true);
             $('.test-wrapper').toggle();
             $('.wrapper').append('<div class="answer-wrapper"' + '<p>' + 'Ти відповів(ла) правильно: на ' + results + ' з ' + answerOption + ' запитань' + '</p>' + '</div>');
